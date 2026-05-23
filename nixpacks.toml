@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "python3", "gcc", "gnumake", "yt-dlp", "ffmpeg"]
+
+[phases.install]
+cmds = ["npm install --omit=dev --build-from-source=false"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "node --no-warnings index.js"

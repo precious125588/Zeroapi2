@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zero API — Docs</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#030305;--c1:#0a0a0f;--c2:#111118;--c3:#18181f;--border:#252532;--accent:#8b5cf6;--accent2:#22d3ee;--accent3:#a78bfa;--grad:linear-gradient(135deg,#8b5cf6,#22d3ee);--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--r:10px}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+header{background:var(--c1);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.logo{font-size:18px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hbadge{font-size:10px;font-weight:700;background:rgba(139,92,246,.2);color:var(--accent3);padding:2px 8px;border-radius:20px;border:1px solid rgba(139,92,246,.3)}
+.hmenu{margin-left:auto;display:flex;gap:8px}
+.hmenu a{color:var(--text2);text-decoration:none;font-size:13px;padding:6px 12px;border-radius:8px;transition:.15s;border:1px solid transparent}
+.hmenu a:hover{background:var(--c3);color:var(--text);border-color:var(--border)}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+.toc{background:var(--c1);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.toc a{display:block;padding:7px 20px;font-size:13px;color:var(--text3);text-decoration:none;border-left:3px solid transparent;transition:.12s}
+.toc a:hover,.toc a.active{color:var(--text);border-left-color:var(--accent)}
+.toc .toc-group{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:12px 20px 4px}
+.body{padding:40px 48px;max-width:860px}
+h2{font-size:22px;font-weight:800;margin:48px 0 8px;padding-top:8px;border-top:1px solid var(--border);scroll-margin-top:72px}
+h2:first-child{border-top:none;margin-top:0}
+h3{font-size:16px;font-weight:700;margin:24px 0 8px;color:var(--accent3)}
+p{color:var(--text2);margin-bottom:12px;font-size:14px}
+.ep-bar{background:var(--c2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px;font-family:monospace;font-size:14px}
+.ep-bar .method{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.25);border-radius:5px;padding:2px 8px;font-size:12px;font-weight:700}
+.ep-bar span{flex:1;color:var(--accent3)}
+.copy-btn{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:var(--accent3);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
+.copy-btn:hover{background:rgba(139,92,246,.3)}
+.params{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px}
+.params th{background:var(--c2);padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.params td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.params td:first-child{font-family:monospace;color:var(--accent3)}
+.req{color:var(--green)!important}
+.code-wrap{position:relative;background:var(--c1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.code-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--c2)}
+.code-tab{padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:.12s}
+.code-tab.active{color:var(--accent3);border-bottom-color:var(--accent)}
+.code-body{padding:16px;font-family:'Fira Code','Consolas',monospace;font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre;color:var(--text2)}
+.code-cp{position:absolute;top:42px;right:10px;background:var(--c3);border:1px solid var(--border);color:var(--text3);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;transition:.15s}
+.code-cp:hover{color:var(--text);border-color:var(--accent3)}
+.note-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--yellow);margin-bottom:14px}
+.badge-new{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.toc{display:none}.body{padding:20px}}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">⚡ Zero API</span>
+  <span class="hbadge">v2.0</span>
+  <nav class="hmenu">
+    <a href="/">🧪 Tester</a>
+    <a href="/register">🔑 Get Key</a>
+    <a href="/admin">⚙ Admin</a>
+  </nav>
+</header>
+<div class="layout">
+<div class="toc" id="toc">
+  <div class="toc-group">Getting Started</div>
+  <a href="#auth">Authentication</a>
+  <a href="#register">Registration / OTP</a>
+  <a href="#login">Login</a>
+  <a href="#response">Response Format</a>
+  <div class="toc-group">Social Media</div>
+  <a href="#tiktok">TikTok</a>
+  <a href="#youtube">YouTube</a>
+  <a href="#instagram">Instagram</a>
+  <a href="#twitter">Twitter/X</a>
+  <a href="#facebook">Facebook</a>
+  <a href="#reddit">Reddit</a>
+  <a href="#spotify">Spotify</a>
+  <div class="toc-group">File Hosting</div>
+  <a href="#mediafire">MediaFire</a>
+  <a href="#gdrive">Google Drive</a>
+  <a href="#dropbox">Dropbox</a>
+  <a href="#pixeldrain">Pixeldrain</a>
+  <a href="#streamtape">StreamTape</a>
+  <div class="toc-group">Content</div>
+  <a href="#movies">Movies/TV</a>
+  <a href="#anime">Anime</a>
+  <a href="#apk">APK</a>
+  <a href="#adult">Adult</a>
+  <a href="#universal">Universal</a>
+  <div class="toc-group">Reference</div>
+  <a href="#errors">Error Codes</a>
+</div>
+<div class="body">
+
+<h2 id="auth">Authentication</h2>
+<p>All API endpoints (except search and public pages) require an API key. Pass it in the header:</p>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">Header</div><div class="code-tab">Query</div></div>
+<div class="code-body" id="auth-header">X-API-Key: YOUR_API_KEY</div>
+<div class="code-body" id="auth-query" style="display:none">GET /api/tiktok?url=...&apikey=YOUR_API_KEY</div>
+<button class="code-cp" onclick="copyCode('auth-header')">Copy</button></div>
+
+<h2 id="register">Registration (Email OTP)</h2>
+<h3>Step 1 — Send OTP</h3>
+<div class="ep-bar"><span class="method">POST</span><span>/auth/send-otp</span><button class="copy-btn" onclick="copyText('POST /auth/send-otp')">Copy</button></div>
+<table class="params"><tr><th>Field</th><th>Required</th><th>Description</th></tr>
+<tr><td>email</td><td class="req">Yes</td><td>Gmail or any email address</td></tr>
+<tr><td>purpose</td><td>No</td><td>register (default) or login</td></tr>
+</table>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-tab">cURL</div></div>
+<div class="code-body" id="otp-js">// Step 1: request OTP
+const r1 = await fetch('/auth/send-otp', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'you@gmail.com', purpose: 'register' })
+});
+const d1 = await r1.json();
+// d1.smtp_enabled = true if email was sent
+// d1.dev_code = code shown only when SMTP not configured</div>
+<div class="code-body" id="otp-curl" style="display:none">curl -X POST /auth/send-otp \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@gmail.com","purpose":"register"}'</div>
+<button class="code-cp" onclick="copyCode('otp-js')">Copy</button></div>
+
+<h3>Step 2 — Register with OTP</h3>
+<div class="ep-bar"><span class="method">POST</span><span>/auth/register</span><button class="copy-btn" onclick="copyText('POST /auth/register')">Copy</button></div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">JavaScript</div></div>
+<div class="code-body" id="reg-js">// Step 2: complete registration
+const r2 = await fetch('/auth/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'John Doe',
+    email: 'you@gmail.com',
+    password: 'yourpassword',
+    code: '123456'  // OTP from email or dev_code
+  })
+});
+const d2 = await r2.json();
+// d2.data.api_key  — your API key (save this!)
+// d2.data.token    — session token
+// d2.data.limit    — "40 requests/day"</div>
+<button class="code-cp" onclick="copyCode('reg-js')">Copy</button></div>
+
+<h2 id="login">Login</h2>
+<div class="ep-bar"><span class="method">POST</span><span>/auth/login</span><button class="copy-btn" onclick="copyText('POST /auth/login')">Copy</button></div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">JavaScript</div></div>
+<div class="code-body" id="login-js">const res = await fetch('/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'you@gmail.com', password: 'yourpassword' })
+});
+const { data } = await res.json();
+// data.api_key  — use in X-API-Key header
+// data.token    — use in X-Session-Token header
+// data.used     — requests used today
+// data.limit    — daily limit</div>
+<button class="code-cp" onclick="copyCode('login-js')">Copy</button></div>
+
+<h2 id="response">Response Format</h2>
+<div class="code-wrap"><div class="code-body">{
+  "success": true,
+  "cached": false,
+  "data": {
+    "platform": "tiktok",
+    "title": "Video title",
+    "quality": "hd",
+    "author": "username",
+    "thumbnail": "https://...",
+    "media": [
+      {
+        "type": "video",         // "video" | "audio" | "image" | "file"
+        "url": "https://...",    // Direct download URL
+        "quality": "hd",        // "4k" | "1080p" | "720p" | "hd" | "sd" | "audio"
+        "container": "mp4",     // File extension
+        "note": "no watermark"  // Optional info
+      }
+    ]
+  }
+}</div></div>
+
+<h2 id="tiktok">TikTok</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/tiktok?url=VIDEO_URL</span><button class="copy-btn" onclick="copyText('GET /api/tiktok?url=VIDEO_URL')">Copy</button></div>
+<p>Returns HD video (no watermark), SD video, audio, and images for slideshows.</p>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-tab">Python</div><div class="code-tab">cURL</div></div>
+<div class="code-body" id="tk-js">const res = await fetch('/api/tiktok?url=https://www.tiktok.com/@user/video/123456', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+const hdVideo = data.media.find(m => m.type === 'video' && m.quality === 'hd');
+// hdVideo.url = direct MP4 (no watermark)</div>
+<div class="code-body" id="tk-py" style="display:none">import requests
+
+r = requests.get('/api/tiktok', params={'url': 'https://www.tiktok.com/@user/video/123456'}, headers={'X-API-Key': 'YOUR_API_KEY'})
+data = r.json()['data']
+video_url = next(m['url'] for m in data['media'] if m['type'] == 'video')</div>
+<div class="code-body" id="tk-curl" style="display:none">curl -H "X-API-Key: YOUR_API_KEY" \
+  "/api/tiktok?url=https://www.tiktok.com/@user/video/123456"</div>
+<button class="code-cp" onclick="copyCode('tk-js')">Copy</button></div>
+
+<h2 id="youtube">YouTube</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/youtube?url=VIDEO_URL</span><button class="copy-btn" onclick="copyText('GET /api/youtube?url=VIDEO_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-tab">cURL</div></div>
+<div class="code-body" id="yt-js">const res = await fetch('/api/youtube?url=https://youtu.be/dQw4w9WgXcQ', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+const bestVideo = data.media.find(m => m.type === 'video');  // Highest quality
+const audio     = data.media.find(m => m.type === 'audio');  // Audio only</div>
+<div class="code-body" id="yt-curl" style="display:none">curl -H "X-API-Key: YOUR_API_KEY" "/api/youtube?url=https://youtu.be/dQw4w9WgXcQ"</div>
+<button class="code-cp" onclick="copyCode('yt-js')">Copy</button></div>
+
+<h2 id="instagram">Instagram</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/instagram?url=POST_URL</span><button class="copy-btn" onclick="copyText('GET /api/instagram?url=POST_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="ig-js">const res = await fetch('/api/instagram?url=https://www.instagram.com/p/POSTID/', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// Reels:   data.media[0].url = direct MP4
+// Gallery: data.media[] = array of images/videos</div>
+<button class="code-cp" onclick="copyCode('ig-js')">Copy</button></div>
+
+<h2 id="twitter">Twitter / X</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/twitter?url=TWEET_URL</span><button class="copy-btn" onclick="copyText('GET /api/twitter?url=TWEET_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="tw-js">const res = await fetch('/api/twitter?url=https://twitter.com/user/status/123456789', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// Returns multiple qualities sorted by bitrate (highest first)</div>
+<button class="code-cp" onclick="copyCode('tw-js')">Copy</button></div>
+
+<h2 id="facebook">Facebook</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/facebook?url=VIDEO_URL</span><button class="copy-btn" onclick="copyText('GET /api/facebook?url=VIDEO_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="fb-js">const res = await fetch('/api/facebook?url=https://www.facebook.com/watch/?v=VIDEO_ID', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// HD and SD versions returned</div>
+<button class="code-cp" onclick="copyCode('fb-js')">Copy</button></div>
+
+<h2 id="reddit">Reddit</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/reddit?url=POST_URL</span><button class="copy-btn" onclick="copyText('GET /api/reddit?url=POST_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="rd-js">const res = await fetch('/api/reddit?url=https://www.reddit.com/r/sub/comments/xxxxx/title/', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// Video: data.media[0].url = video-only MP4
+// Audio: data.media[1].url = separate audio (merge yourself)
+// Gallery: data.media[] = multiple images</div>
+<button class="code-cp" onclick="copyCode('rd-js')">Copy</button></div>
+
+<h2 id="spotify">Spotify</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/spotify?url=TRACK_URL</span><button class="copy-btn" onclick="copyText('GET /api/spotify?url=TRACK_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="sp-js">const res = await fetch('/api/spotify?url=https://open.spotify.com/track/TRACK_ID', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();</div>
+<button class="code-cp" onclick="copyCode('sp-js')">Copy</button></div>
+
+<h2 id="mediafire">MediaFire</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/mediafire?url=SHARE_URL</span><button class="copy-btn" onclick="copyText('GET /api/mediafire?url=SHARE_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="mf-js">const res = await fetch('/api/mediafire?url=https://www.mediafire.com/file/abc123/file.zip', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+const dlUrl = data.media[0].url; // Direct CDN download</div>
+<button class="code-cp" onclick="copyCode('mf-js')">Copy</button></div>
+
+<h2 id="gdrive">Google Drive</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/gdrive?url=SHARE_URL</span><button class="copy-btn" onclick="copyText('GET /api/gdrive?url=SHARE_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="gd-js">// File must be publicly shared (anyone with the link)
+const res = await fetch('/api/gdrive?url=https://drive.google.com/file/d/FILE_ID/view', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();</div>
+<button class="code-cp" onclick="copyCode('gd-js')">Copy</button></div>
+
+<h2 id="dropbox">Dropbox</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/dropbox?url=SHARE_URL</span><button class="copy-btn" onclick="copyText('GET /api/dropbox?url=SHARE_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="db-js">// Converts dl=0 to direct download link automatically
+const res = await fetch('/api/dropbox?url=https://www.dropbox.com/s/xxx/file.mp4?dl=0', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();</div>
+<button class="code-cp" onclick="copyCode('db-js')">Copy</button></div>
+
+<h2 id="pixeldrain">Pixeldrain</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/pixeldrain?url=FILE_URL</span><button class="copy-btn" onclick="copyText('GET /api/pixeldrain?url=FILE_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="pd-js">const res = await fetch('/api/pixeldrain?url=https://pixeldrain.com/u/FILE_ID', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// data.media[0].url = https://pixeldrain.com/api/file/FILE_ID?download</div>
+<button class="code-cp" onclick="copyCode('pd-js')">Copy</button></div>
+
+<h2 id="streamtape">StreamTape</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/streamtape?url=VIDEO_URL</span><button class="copy-btn" onclick="copyText('GET /api/streamtape?url=VIDEO_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="st-js">const res = await fetch('/api/streamtape?url=https://streamtape.com/v/VIDEO_ID/', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// data.media[0].url = direct MP4 download</div>
+<button class="code-cp" onclick="copyCode('st-js')">Copy</button></div>
+
+<h2 id="movies">Movies & TV <span class="badge-new">NEW</span></h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/movies?url=TMDB_ID&type=movie</span><button class="copy-btn" onclick="copyText('GET /api/movies?url=TMDB_ID&type=movie')">Copy</button></div>
+<table class="params"><tr><th>Param</th><th>Required</th><th>Example</th></tr>
+<tr><td>url</td><td class="req">Yes</td><td>TMDB ID (550), TMDB URL, or IMDB tt-id</td></tr>
+<tr><td>type</td><td>No</td><td>movie (default) or tv</td></tr>
+<tr><td>season</td><td>No</td><td>1 (for TV series)</td></tr>
+<tr><td>episode</td><td>No</td><td>1 (for TV series)</td></tr>
+</table>
+<div class="note-box">⚠ Returns HLS (.m3u8) streams and embed player URLs. Use HLS.js or VLC for m3u8 streams, or use the embed URLs in an iframe.</div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">Movie</div><div class="code-tab">TV Episode</div></div>
+<div class="code-body" id="mv-movie">// Movie by TMDB ID
+const res = await fetch('/api/movies?url=550&type=movie', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// data.media[] contains HLS streams and embed URLs
+const hls   = data.media.find(m => m.container === 'm3u8');
+const embed = data.media.find(m => m.container === 'embed');
+// Use hls.url in HLS.js player, or embed.url in an iframe</div>
+<div class="code-body" id="mv-tv" style="display:none">// TV show episode (Breaking Bad, S1E1)
+const res = await fetch('/api/movies?url=1396&type=tv&season=1&episode=1', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// data.subtitles[] — subtitle tracks with lang and url</div>
+<button class="code-cp" onclick="copyCode('mv-movie')">Copy</button></div>
+
+<h2 id="anime">Anime <span class="badge-new">NEW</span></h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/anime?url=ANIME_ID&episode=1</span><button class="copy-btn" onclick="copyText('GET /api/anime?url=ANIME_ID&episode=1')">Copy</button></div>
+<div class="note-box">⚠ Returns HLS m3u8 streams via Consumet/Gogoanime. Requires m3u8-capable player (HLS.js, VLC, etc.)</div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">Download</div><div class="code-tab">Search</div><div class="code-tab">Info</div></div>
+<div class="code-body" id="an-dl">const res = await fetch('/api/anime?url=one-piece&episode=1', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+const hlsUrl = data.media.find(m => m.container === 'm3u8').url;</div>
+<div class="code-body" id="an-search" style="display:none">// Search — no API key required
+const res = await fetch('/api/anime/search?q=attack+on+titan');
+const { data } = await res.json(); // Array of results with id, title</div>
+<div class="code-body" id="an-info" style="display:none">// Get anime info with episode list
+const res = await fetch('/api/anime/info?id=shingeki-no-kyojin');
+const { data } = await res.json();</div>
+<button class="code-cp" onclick="copyCode('an-dl')">Copy</button></div>
+
+<h2 id="apk">APK Downloads <span class="badge-new">NEW</span></h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/apk?url=com.whatsapp</span><button class="copy-btn" onclick="copyText('GET /api/apk?url=com.whatsapp')">Copy</button></div>
+<div class="code-wrap"><div class="code-tabs"><div class="code-tab active">Download</div><div class="code-tab">Search</div><div class="code-tab">Info</div></div>
+<div class="code-body" id="apk-dl">const res = await fetch('/api/apk?url=com.whatsapp', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+const apkUrl = data.media[0].url; // Direct APK download from APKPure CDN</div>
+<div class="code-body" id="apk-search" style="display:none">// Search APKs — no API key required
+const res = await fetch('/api/apk/search?q=whatsapp&limit=5');
+const { data } = await res.json();</div>
+<div class="code-body" id="apk-info" style="display:none">// Get APK info — no API key required
+const res = await fetch('/api/apk/info?package_id=com.whatsapp');
+const { data } = await res.json();</div>
+<button class="code-cp" onclick="copyCode('apk-dl')">Copy</button></div>
+
+<h2 id="adult">Adult Content</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/adult?url=VIDEO_URL</span><button class="copy-btn" onclick="copyText('GET /api/adult?url=VIDEO_URL')">Copy</button></div>
+<p>Supported: <strong>xnxx.com</strong>, <strong>eporner.com</strong>, <strong>xhamster.com</strong></p>
+<div class="code-wrap"><div class="code-body" id="adult-js">const res = await fetch('/api/adult?url=https://www.xnxx.com/video-xxxxx/title', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+// Returns multiple MP4 qualities (HD, SD) and/or HLS m3u8</div>
+<button class="code-cp" onclick="copyCode('adult-js')">Copy</button></div>
+
+<h2 id="universal">Universal / Auto-Detect</h2>
+<div class="ep-bar"><span class="method">GET</span><span>/api/universal?url=ANY_URL</span><button class="copy-btn" onclick="copyText('GET /api/universal?url=ANY_URL')">Copy</button></div>
+<div class="code-wrap"><div class="code-body" id="uni-js">// Automatically detects platform and routes
+const res = await fetch('/api/universal?url=https://www.tiktok.com/@user/video/123', {
+  headers: { 'X-API-Key': 'YOUR_API_KEY' }
+});
+const { data } = await res.json();
+console.log(data.platform); // 'tiktok'</div>
+<button class="code-cp" onclick="copyCode('uni-js')">Copy</button></div>
+
+<h2 id="errors">Error Codes</h2>
+<table class="params"><tr><th>Status</th><th>Meaning</th></tr>
+<tr><td>401</td><td>Missing or invalid API key</td></tr>
+<tr><td>403</td><td>Key disabled, blacklisted, or IP blocked</td></tr>
+<tr><td>429</td><td>Daily request limit reached — resets each day</td></tr>
+<tr><td>422</td><td>No downloadable media found (private/removed content)</td></tr>
+<tr><td>502</td><td>Provider failed — try again or use another platform</td></tr>
+<tr><td>503</td><td>Endpoint disabled or in maintenance mode</td></tr>
+</table>
+
+</div>
+</div>
+<script>
+// Code tabs
+document.querySelectorAll('.code-wrap').forEach(wrap => {
+  const tabs = wrap.querySelectorAll('.code-tab');
+  const bodies = wrap.querySelectorAll('.code-body');
+  tabs.forEach((tab, i) => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    bodies.forEach((b, j) => b.style.display = j === i ? 'block' : 'none');
+  }));
+});
+function copyCode(id) {
+  const el = document.getElementById(id); if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = el.closest('.code-wrap')?.querySelector('.code-cp');
+    if (btn) { const o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = o, 1400); }
+  });
+}
+function copyText(t) { navigator.clipboard.writeText(t); }
+// TOC active on scroll
+const headings = document.querySelectorAll('h2[id]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('.toc a').forEach(a => a.classList.remove('active')); document.querySelector(`.toc a[href="#${e.target.id}"]`)?.classList.add('active'); } });
+}, { rootMargin: '-10px 0px -80% 0px' });
+headings.forEach(h => observer.observe(h));
+</script>
+</body>
+</html>

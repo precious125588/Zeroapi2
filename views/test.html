@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zero API v2</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#030305;--c1:#0a0a0f;--c2:#111118;--c3:#18181f;--c4:#1e1e28;
+  --border:#252532;--border2:#2d2d3e;
+  --accent:#8b5cf6;--accent2:#22d3ee;--accent3:#a78bfa;
+  --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  --green:#10b981;--red:#ef4444;--yellow:#f59e0b;--orange:#f97316;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --r:10px;--r2:14px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.5}
+/* ── scrollbar ── */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--c1)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ── layout ── */
+.app{display:flex;flex-direction:column;height:100vh}
+header{flex-shrink:0;background:var(--c1);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;gap:12px}
+.logo{font-size:18px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.hbadge{font-size:11px;font-weight:700;background:rgba(139,92,246,.2);color:var(--accent3);padding:3px 8px;border-radius:20px;border:1px solid rgba(139,92,246,.3)}
+.hmenu{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hmenu a{color:var(--text2);text-decoration:none;font-size:13px;padding:6px 12px;border-radius:8px;transition:.15s;border:1px solid transparent}
+.hmenu a:hover{background:var(--c3);color:var(--text);border-color:var(--border)}
+.hmenu a.cta{background:rgba(139,92,246,.15);color:var(--accent3);border-color:rgba(139,92,246,.3)}
+.hmenu a.cta:hover{background:rgba(139,92,246,.3)}
+.body{flex:1;display:grid;grid-template-columns:250px 1fr;min-height:0}
+/* ── sidebar ── */
+.sidebar{background:var(--c1);border-right:1px solid var(--border);overflow-y:auto;padding:8px 0 20px}
+.s-group{padding:16px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+.s-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;border-left:3px solid transparent;font-size:13px;color:var(--text2);transition:.12s;user-select:none}
+.s-item:hover{background:var(--c2);color:var(--text)}
+.s-item.active{background:rgba(139,92,246,.1);border-left-color:var(--accent);color:var(--accent3)}
+.s-item .ico{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.s-item .ep-badge{margin-left:auto;font-size:10px;font-weight:600;background:rgba(139,92,246,.15);color:var(--accent3);padding:1px 6px;border-radius:10px}
+/* ── content ── */
+.content{overflow-y:auto;padding:28px}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
+/* ── key bar ── */
+.key-bar{display:flex;align-items:center;gap:10px;background:var(--c2);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;margin-bottom:20px}
+.key-bar-label{font-size:12px;font-weight:600;color:var(--text3);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+.key-bar input{flex:1;background:transparent;border:none;outline:none;color:var(--accent3);font-size:13px;font-family:monospace;min-width:0}
+.key-bar input::placeholder{color:var(--text3)}
+.key-save{background:rgba(139,92,246,.2);border:1px solid rgba(139,92,246,.3);color:var(--accent3);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.key-save:hover{background:rgba(139,92,246,.4)}
+.key-status{font-size:12px;color:var(--text3);margin-top:-14px;margin-bottom:16px;padding:0 4px}
+/* ── form ── */
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.field input,.field select{width:100%;background:var(--c2);border:1px solid var(--border2);border-radius:var(--r);padding:10px 14px;color:var(--text);font-size:14px;outline:none;transition:.15s}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.run-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);color:#fff;border:none;border-radius:var(--r);padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;margin-top:4px}
+.run-btn:hover{opacity:.85}
+.run-btn:disabled{opacity:.4;cursor:not-allowed}
+/* ── result ── */
+.result-box{margin-top:20px;background:var(--c1);border:1px solid var(--border2);border-radius:var(--r2);overflow:hidden}
+.result-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--c2);border-bottom:1px solid var(--border)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:var(--green)}
+.dot-err{background:var(--red)}
+.result-meta{font-size:13px;font-weight:600}
+.cached-tag{margin-left:auto;font-size:11px;background:rgba(245,158,11,.15);color:var(--yellow);padding:2px 8px;border-radius:10px;border:1px solid rgba(245,158,11,.3)}
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:14px}
+.media-card{background:var(--c3);border:1px solid var(--border2);border-radius:var(--r);padding:14px}
+.mc-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--c4);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:6px}
+.mc-quality{font-size:20px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.mc-note{font-size:12px;color:var(--yellow);margin-bottom:8px}
+.mc-btns{display:flex;gap:6px;flex-wrap:wrap}
+.mc-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;border:1px solid;transition:.15s}
+.mc-btn-dl{background:rgba(139,92,246,.15);color:var(--accent3);border-color:rgba(139,92,246,.3)}
+.mc-btn-dl:hover{background:rgba(139,92,246,.3)}
+.mc-btn-cp{background:rgba(34,211,238,.1);color:var(--accent2);border-color:rgba(34,211,238,.25)}
+.mc-btn-cp:hover{background:rgba(34,211,238,.2)}
+.thumb-img{width:100%;border-radius:7px;max-height:100px;object-fit:cover;margin-bottom:8px}
+.result-json{padding:14px;font-family:'Fira Code','Consolas',monospace;font-size:12px;color:var(--text2);overflow:auto;max-height:350px;line-height:1.6;background:var(--bg);border-top:1px solid var(--border)}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(139,92,246,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.welcome-card{background:var(--c2);border:1px solid var(--border2);border-radius:var(--r2);padding:24px;margin-bottom:20px}
+.welcome-card h3{font-size:16px;font-weight:700;margin-bottom:12px}
+.welcome-card p{font-size:14px;color:var(--text2);line-height:1.8}
+.welcome-card a{color:var(--accent3);text-decoration:none}
+.welcome-card a:hover{text-decoration:underline}
+/* ── mobile ── */
+.mob-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text)}
+@media(max-width:768px){
+  header{padding:0 14px}
+  .hmenu a:not(.cta){display:none}
+  .body{grid-template-columns:1fr}
+  .sidebar{display:none;position:fixed;inset:56px 0 0 0;z-index:50;width:100%;max-width:280px;border-right:1px solid var(--border)}
+  .sidebar.open{display:block}
+  .content{padding:16px}
+  .mob-menu-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:var(--c3)}
+  .media-grid{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr}
+  .logo{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <button class="mob-menu-btn" id="mob-menu-btn" onclick="toggleSidebar()" title="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <span class="logo">⚡ Zero API</span>
+  <span class="hbadge">v2.0</span>
+  <nav class="hmenu">
+    <a href="/docs">📄 Docs</a>
+    <a href="/register" class="cta">🔑 Get Key</a>
+    <a href="/admin">⚙ Admin</a>
+    <a href="/login">Login</a>
+  </nav>
+</header>
+<div class="body">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="content" id="content">
+    <div style="max-width:720px">
+      <div class="page-title">Media Downloader</div>
+      <div class="page-sub">Select a platform from the sidebar to start downloading</div>
+      <div class="key-bar">
+        <span class="key-bar-label">API Key</span>
+        <input id="global-key" placeholder="Paste your API key here" autocomplete="off" spellcheck="false"/>
+        <button class="key-save" onclick="saveKey()">Save</button>
+      </div>
+      <div class="key-status" id="key-status"></div>
+      <div class="welcome-card">
+        <h3>🚀 Quick Start</h3>
+        <p>
+          1. <a href="/register">Register</a> for a free API key (40 requests/day)<br>
+          2. Paste your key above and click Save<br>
+          3. Pick a platform from the sidebar and paste a URL<br>
+          4. <a href="/docs">Read the docs</a> for full endpoint reference &amp; code snippets
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const ENDPOINTS = [
+  {group:'Social Media',items:[
+    {id:'tiktok',   ico:'🎵',label:'TikTok',   desc:'Videos, slideshows, audio',  path:'/api/tiktok',   fields:[{k:'url',ph:'https://www.tiktok.com/@user/video/...'}]},
+    {id:'instagram',ico:'📸',label:'Instagram', desc:'Reels, posts, carousels',    path:'/api/instagram', fields:[{k:'url',ph:'https://www.instagram.com/p/...'}]},
+    {id:'youtube',  ico:'▶',label:'YouTube',   desc:'Videos, Shorts, audio',      path:'/api/youtube',   fields:[{k:'url',ph:'https://www.youtube.com/watch?v=...'}]},
+    {id:'twitter',  ico:'𝕏',label:'Twitter/X', desc:'Videos, GIFs, images',       path:'/api/twitter',   fields:[{k:'url',ph:'https://twitter.com/user/status/...'}]},
+    {id:'facebook', ico:'📘',label:'Facebook',  desc:'Videos, reels',              path:'/api/facebook',  fields:[{k:'url',ph:'https://www.facebook.com/...'}]},
+    {id:'snapchat', ico:'👻',label:'Snapchat',  desc:'Public stories, snaps',      path:'/api/snapchat',  fields:[{k:'url',ph:'https://story.snapchat.com/s/...'}]},
+    {id:'reddit',   ico:'🤖',label:'Reddit',    desc:'Videos, galleries, images',  path:'/api/reddit',    fields:[{k:'url',ph:'https://www.reddit.com/r/.../comments/...'}]},
+    {id:'threads',  ico:'🧵',label:'Threads',   desc:'Videos, images',             path:'/api/threads',   fields:[{k:'url',ph:'https://www.threads.net/...'}]},
+    {id:'pinterest',ico:'📌',label:'Pinterest', desc:'Images, video pins',         path:'/api/pinterest', fields:[{k:'url',ph:'https://www.pinterest.com/pin/...'}]},
+    {id:'spotify',  ico:'🎵',label:'Spotify',   desc:'Track preview/download',     path:'/api/spotify',   fields:[{k:'url',ph:'https://open.spotify.com/track/...'}]},
+  ]},
+  {group:'File Hosting',items:[
+    {id:'mediafire', ico:'🔥',label:'MediaFire',  desc:'Direct file download',   path:'/api/mediafire',  fields:[{k:'url',ph:'https://www.mediafire.com/file/...'}]},
+    {id:'gdrive',    ico:'💾',label:'Google Drive',desc:'Shared file download',  path:'/api/gdrive',     fields:[{k:'url',ph:'https://drive.google.com/file/d/...'}]},
+    {id:'dropbox',   ico:'📦',label:'Dropbox',    desc:'Shared file download',  path:'/api/dropbox',    fields:[{k:'url',ph:'https://www.dropbox.com/s/...'}]},
+    {id:'mega',      ico:'🌐',label:'Mega.nz',    desc:'File info + key',        path:'/api/mega',       fields:[{k:'url',ph:'https://mega.nz/file/...'}]},
+    {id:'pixeldrain', ico:'💧',label:'Pixeldrain', desc:'Direct download',       path:'/api/pixeldrain', fields:[{k:'url',ph:'https://pixeldrain.com/u/...'}]},
+    {id:'streamtape', ico:'📼',label:'StreamTape', desc:'Extract MP4 link',      path:'/api/streamtape', fields:[{k:'url',ph:'https://streamtape.com/v/...'}]},
+  ]},
+  {group:'Content',items:[
+    {id:'movies',ico:'🎬',label:'Movies/TV', desc:'Stream via TMDB',     path:'/api/movies',  fields:[{k:'url',ph:'TMDB ID, e.g. 550 (movie) or 1399 (TV)'},{k:'type',ph:'movie or tv'},{k:'season',ph:'1 (for TV)'},{k:'episode',ph:'1 (for TV)'}]},
+    {id:'anime', ico:'⛩',label:'Anime',    desc:'Episodes via Gogo',   path:'/api/anime',   fields:[{k:'url',ph:'Anime ID, e.g. one-piece'},{k:'episode',ph:'1'}]},
+    {id:'adult', ico:'🔞',label:'Adult',    desc:'xnxx, ePorner, xHamster', path:'/api/adult', fields:[{k:'url',ph:'https://www.xnxx.com/video-...'}]},
+  ]},
+  {group:'Apps',items:[
+    {id:'apk',ico:'📱',label:'APK',desc:'APKPure direct download',path:'/api/apk',fields:[{k:'url',ph:'Package ID, e.g. com.whatsapp'}]},
+  ]},
+  {group:'Universal',items:[
+    {id:'universal',ico:'🌐',label:'Auto-Detect',desc:'Detects platform automatically',path:'/api/universal',fields:[{k:'url',ph:'Paste any supported URL here'}]},
+  ]},
+];
+
+// Store ep configs by ID for safe lookup (avoids JSON-in-onclick issues)
+const EP_MAP = {};
+ENDPOINTS.forEach(g => g.items.forEach(ep => { EP_MAP[ep.id] = ep; }));
+
+let apiKey = localStorage.getItem('zeroapi_key') || '';
+if (apiKey) { document.getElementById('global-key').value = apiKey; updateKeyStatus(); }
+
+function saveKey() {
+  apiKey = document.getElementById('global-key').value.trim();
+  localStorage.setItem('zeroapi_key', apiKey);
+  updateKeyStatus();
+}
+function updateKeyStatus() {
+  const el = document.getElementById('key-status');
+  el.innerHTML = apiKey
+    ? '<span style="color:var(--green)">✓ API key saved — sent automatically with every request</span>'
+    : '<span style="color:var(--text3)">No key — most endpoints require X-API-Key. <a href="/register" style="color:var(--accent3)">Get one free →</a></span>';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Build sidebar
+const sb = document.getElementById('sidebar');
+ENDPOINTS.forEach(g => {
+  const gEl = document.createElement('div');
+  gEl.innerHTML = `<div class="s-group">${g.group}</div>`;
+  g.items.forEach(ep => {
+    const el = document.createElement('div');
+    el.className = 's-item';
+    el.id = 'si-'+ep.id;
+    el.innerHTML = `<span class="ico">${ep.ico}</span><span>${ep.label}</span><span class="ep-badge">GET</span>`;
+    el.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      openEndpoint(ep.id);
+    });
+    gEl.appendChild(el);
+  });
+  sb.appendChild(gEl);
+});
+
+function openEndpoint(id) {
+  const ep = EP_MAP[id];
+  if (!ep) return;
+  document.querySelectorAll('.s-item').forEach(e => e.classList.remove('active'));
+  document.getElementById('si-'+id)?.classList.add('active');
+
+  const fieldsHtml = ep.fields.map(f => `
+    <div class="field">
+      <label>${f.k}</label>
+      <input id="f-${id}-${f.k}" placeholder="${f.ph}" autocomplete="off" spellcheck="false"/>
+    </div>`).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div style="max-width:760px">
+      <div class="page-title">${ep.ico} ${ep.label}</div>
+      <div class="page-sub">${ep.desc} &nbsp;·&nbsp; <code style="font-size:12px;color:var(--accent3);background:var(--c3);padding:2px 8px;border-radius:5px">GET ${ep.path}</code></div>
+      <div class="key-bar">
+        <span class="key-bar-label">API Key</span>
+        <input id="inline-key" value="${apiKey}" placeholder="API key" autocomplete="off" spellcheck="false" oninput="apiKey=this.value;localStorage.setItem('zeroapi_key',this.value)"/>
+        <button class="key-save" onclick="saveKey()">Save</button>
+      </div>
+      ${fieldsHtml}
+      <button class="run-btn" id="run-btn">▶ Run Request</button>
+      <div id="result-area"></div>
+    </div>`;
+
+  // Safe event listener — NO JSON in onclick attribute
+  document.getElementById('run-btn').addEventListener('click', () => runRequest(ep));
+}
+
+async function runRequest(ep) {
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Fetching…';
+  const area = document.getElementById('result-area');
+  area.innerHTML = `<div class="result-box"><div style="padding:24px;text-align:center;color:var(--text2)"><span class="spinner"></span> Sending request…</div></div>`;
+
+  try {
+    const params = new URLSearchParams();
+    let hasRequired = false;
+    ep.fields.forEach(f => {
+      const v = (document.getElementById(`f-${ep.id}-${f.k}`) || document.getElementById(`f-inline-${f.k}`))?.value?.trim() || '';
+      if (v) { params.set(f.k, v); if (f.k === 'url' || f.k === 'id') hasRequired = true; }
+    });
+    if (!hasRequired) throw new Error('Please fill in the URL / required field');
+
+    const headers = {};
+    const currentKey = apiKey || document.getElementById('inline-key')?.value?.trim();
+    if (currentKey) headers['X-API-Key'] = currentKey;
+
+    const res  = await fetch(`${ep.path}?${params.toString()}`, { headers });
+    const data = await res.json();
+    renderResult(data, res.status);
+  } catch(e) {
+    area.innerHTML = `<div class="result-box"><div class="result-header"><div class="status-dot dot-err"></div><span class="result-meta">Error</span></div><div class="result-json" style="color:var(--red)">${e.message}</div></div>`;
+  }
+  btn.disabled = false;
+  btn.innerHTML = '▶ Run Request';
+}
+
+function renderResult(data, status) {
+  const area = document.getElementById('result-area');
+  const ok = data.success && status < 400;
+  let html = `<div class="result-box"><div class="result-header"><div class="status-dot ${ok?'dot-ok':'dot-err'}"></div><span class="result-meta">${status} ${ok?'Success':'Error'}</span>${data.cached?'<span class="cached-tag">⚡ cached</span>':''}`;
+  html += `<span style="margin-left:auto;font-size:12px;color:var(--text3)">${new Date().toLocaleTimeString()}</span></div>`;
+
+  if (ok && data.data) {
+    const d = data.data;
+    html += `<div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px">${d.title||''}</div>
+      ${d.quality?`<span style="font-size:12px;color:var(--accent3);background:rgba(139,92,246,.1);padding:2px 8px;border-radius:10px">${d.quality}</span>`:''}
+      ${d.author?`<span style="font-size:12px;color:var(--text2);margin-left:8px">by ${d.author}</span>`:''}
+      ${d.note?`<div style="margin-top:8px;font-size:13px;color:var(--yellow);background:rgba(245,158,11,.08);padding:8px 12px;border-radius:7px">⚠ ${d.note}</div>`:''}
+    </div>`;
+    if (d.thumbnail) html += `<div style="padding:10px 14px"><img src="${d.thumbnail}" style="max-width:180px;border-radius:8px;display:block"/></div>`;
+    if (d.media?.length) {
+      html += `<div class="media-grid">`;
+      d.media.forEach(m => {
+        const safeUrl = m.url.replace(/'/g, "\\'");
+        html += `<div class="media-card">
+          <div class="mc-type">${m.type} · ${m.container}</div>
+          <div class="mc-quality">${m.quality||'—'}</div>
+          ${m.note?`<div class="mc-note">⚠ ${m.note}</div>`:''}
+          <div class="mc-btns">
+            <a class="mc-btn mc-btn-dl" href="${m.url}" target="_blank" download>⬇ Download</a>
+            <button class="mc-btn mc-btn-cp" onclick="copyUrl('${safeUrl}',this)">📋 Copy URL</button>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    }
+    if (d.subtitles?.length) html += `<div style="padding:8px 14px;font-size:12px;color:var(--text3);border-top:1px solid var(--border)">📝 ${d.subtitles.length} subtitle tracks</div>`;
+  } else if (!ok) {
+    html += `<div style="padding:16px;color:var(--red);font-size:14px">❌ ${data.error||'Unknown error'}</div>`;
+  }
+  html += `<details style="border-top:1px solid var(--border)"><summary style="padding:10px 14px;font-size:12px;color:var(--text3);cursor:pointer;user-select:none">Raw JSON ▾</summary><div class="result-json">${JSON.stringify(data,null,2)}</div></details>`;
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function copyUrl(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.innerHTML; btn.innerHTML = '✓ Copied!';
+    setTimeout(() => btn.innerHTML = orig, 1400);
+  });
+}
+function saveKey() {
+  apiKey = document.getElementById('global-key')?.value?.trim() || document.getElementById('inline-key')?.value?.trim() || '';
+  localStorage.setItem('zeroapi_key', apiKey);
+  updateKeyStatus();
+  const ik = document.getElementById('inline-key'); if(ik) ik.value = apiKey;
+}
+</script>
+</body>
+</html>

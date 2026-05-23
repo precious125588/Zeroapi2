@@ -1,0 +1,10 @@
+const express = require('express');
+const { handleDownload } = require('../controllers/download.controller');
+const apkSvc = require('../services/apk.service');
+const r = express.Router();
+r.get('/', (req, res) => handleDownload('apk', req, res));
+r.post('/', (req, res) => handleDownload('apk', req, res));
+r.get('/search', async (req, res) => { const {q,limit=10}=req.query; if(!q) return res.status(400).json({success:false,error:'q required'}); try{res.json({success:true,data:await apkSvc.search(q,parseInt(limit))})}catch(e){res.status(502).json({success:false,error:e.message})} });
+r.get('/info', async (req, res) => { const {package_id}=req.query; if(!package_id) return res.status(400).json({success:false,error:'package_id required'}); try{res.json({success:true,data:await apkSvc.getInfo(package_id)})}catch(e){res.status(502).json({success:false,error:e.message})} });
+r.get('/versions', async (req, res) => { const {package_id}=req.query; if(!package_id) return res.status(400).json({success:false,error:'package_id required'}); try{res.json({success:true,data:await apkSvc.getVersions(package_id)})}catch(e){res.status(502).json({success:false,error:e.message})} });
+module.exports = r;

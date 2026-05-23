@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zero API — Register</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#030305;--c1:#0a0a0f;--c2:#111118;--c3:#18181f;--border:#252532;--accent:#8b5cf6;--accent2:#22d3ee;--accent3:#a78bfa;--grad:linear-gradient(135deg,#8b5cf6,#22d3ee);--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--c1);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:460px}
+.logo{text-align:center;margin-bottom:28px}
+.logo h1{font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo p{color:var(--text2);font-size:14px;margin-top:6px}
+.free-badge{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(34,211,238,.1));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:12px 16px;text-align:center;font-size:13px;color:var(--green);margin-bottom:24px}
+.step{display:none}.step.active{display:block}
+.step-indicator{display:flex;gap:8px;margin-bottom:24px;justify-content:center}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:.3s}
+.step-dot.active{background:var(--accent);box-shadow:0 0 8px rgba(139,92,246,.5)}
+.step-dot.done{background:var(--green)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.field input{width:100%;background:var(--c2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;transition:.15s}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+.field .hint{font-size:12px;color:var(--text3);margin-top:5px}
+.btn{width:100%;background:var(--grad);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:.2s}
+.btn:hover{opacity:.85}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-outline{width:100%;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:14px;cursor:pointer;margin-top:8px;transition:.15s}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent3)}
+.msg{padding:12px 14px;border-radius:10px;font-size:14px;margin-top:14px;text-align:center}
+.msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red)}
+.msg.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.link-row{text-align:center;margin-top:20px;font-size:14px;color:var(--text3)}
+.link-row a{color:var(--accent3);text-decoration:none}
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin:20px 0}
+.otp-input{width:48px;height:56px;background:var(--c2);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:24px;font-weight:700;text-align:center;outline:none;transition:.15s}
+.otp-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+.key-result{background:var(--c2);border:1px solid rgba(139,92,246,.3);border-radius:14px;padding:24px}
+.kv-block{margin-bottom:14px}
+.kv-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px}
+.kv-val{font-family:monospace;font-size:13px;color:var(--accent3);background:var(--bg);padding:10px 12px;border-radius:8px;word-break:break-all;cursor:pointer;border:1px solid var(--border);transition:.15s}
+.kv-val:hover{border-color:var(--accent)}
+.kv-hint{font-size:11px;color:var(--text3);margin-top:4px}
+.resend-link{text-align:center;font-size:13px;color:var(--text3);margin-top:12px}
+.resend-link button{background:none;border:none;color:var(--accent3);cursor:pointer;font-size:13px}
+.resend-link button:disabled{color:var(--text3);cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <h1>⚡ Zero API</h1>
+    <p>Create your free account</p>
+  </div>
+  <div class="free-badge">🎁 Free · 40 API requests/day · Auto-assigned API key</div>
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+  </div>
+  <div id="msg"></div>
+
+  <!-- Step 1: Info -->
+  <div class="step active" id="step1">
+    <div class="field"><label>Full Name</label><input type="text" id="name" placeholder="Your name" autocomplete="name"/></div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@gmail.com" autocomplete="email"/>
+      <div class="hint">A verification code will be sent to this email</div>
+    </div>
+    <div class="field"><label>Password</label><input type="password" id="password" placeholder="At least 6 characters" autocomplete="new-password"/></div>
+    <button class="btn" id="btn1" onclick="sendOtp()">Continue →</button>
+  </div>
+
+  <!-- Step 2: OTP -->
+  <div class="step" id="step2">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:40px;margin-bottom:12px">📬</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px">Check your email</div>
+      <div style="font-size:13px;color:var(--text2)" id="otp-sent-to"></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">Enter the 6-digit code below</div>
+    </div>
+    <div class="otp-inputs" id="otp-inputs">
+      <input class="otp-input" id="otp0" maxlength="1" type="text" inputmode="numeric"/>
+      <input class="otp-input" id="otp1" maxlength="1" type="text" inputmode="numeric"/>
+      <input class="otp-input" id="otp2" maxlength="1" type="text" inputmode="numeric"/>
+      <input class="otp-input" id="otp3" maxlength="1" type="text" inputmode="numeric"/>
+      <input class="otp-input" id="otp4" maxlength="1" type="text" inputmode="numeric"/>
+      <input class="otp-input" id="otp5" maxlength="1" type="text" inputmode="numeric"/>
+    </div>
+    <div id="dev-code-hint" style="display:none;text-align:center;font-size:13px;color:var(--yellow);background:rgba(245,158,11,.08);padding:10px;border-radius:8px;margin-bottom:12px;font-family:monospace"></div>
+    <button class="btn" id="btn2" onclick="completeRegister()">Create Account ✓</button>
+    <button class="btn-outline" onclick="goBack()">← Back</button>
+    <div class="resend-link">Didn't get it? <button id="resend-btn" onclick="resendOtp()">Resend code</button> <span id="resend-timer"></span></div>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div class="step" id="step3">
+    <div class="key-result">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:36px">🎉</div>
+        <div style="font-size:18px;font-weight:700;margin-top:8px;color:var(--green)">Account Created!</div>
+      </div>
+      <div class="kv-block">
+        <div class="kv-label">Your API Key (click to copy)</div>
+        <div class="kv-val" id="kv-key" onclick="copyEl('kv-key')"></div>
+        <div class="kv-hint">Use this in the X-API-Key header with every request</div>
+      </div>
+      <div class="kv-block">
+        <div class="kv-label">Daily Limit</div>
+        <div id="kv-limit" style="font-size:14px;color:var(--green);padding:4px 0"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <a href="/" style="flex:1;display:block;text-align:center;background:var(--grad);color:#fff;text-decoration:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px">→ Try API Tester</a>
+        <a href="/docs" style="flex:1;display:block;text-align:center;background:var(--c3);color:var(--text2);text-decoration:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;border:1px solid var(--border)">View Docs</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="link-row">Already have an account? <a href="/login">Sign in</a></div>
+</div>
+<script>
+let userEmail='', resendInterval=null;
+
+// OTP input navigation
+for(let i=0;i<6;i++){
+  document.getElementById('otp'+i).addEventListener('input',e=>{
+    const v=e.target.value.replace(/\D/g,'');
+    e.target.value=v.slice(-1);
+    if(v && i<5) document.getElementById('otp'+(i+1)).focus();
+    if(getOtp().length===6) completeRegister();
+  });
+  document.getElementById('otp'+i).addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!e.target.value&&i>0) document.getElementById('otp'+(i-1)).focus();
+  });
+}
+
+function getOtp() { return Array.from({length:6},(_,i)=>document.getElementById('otp'+i).value).join(''); }
+function setMsg(text,type='err'){ const el=document.getElementById('msg'); el.className='msg '+type; el.textContent=text; }
+function clearMsg(){ document.getElementById('msg').innerHTML=''; document.getElementById('msg').className=''; }
+
+async function sendOtp() {
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  clearMsg();
+  if(!name) return setMsg('Name is required.');
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setMsg('Valid email required.');
+  if(!password||password.length<6) return setMsg('Password must be at least 6 characters.');
+  const btn=document.getElementById('btn1'); btn.disabled=true; btn.textContent='Sending code…';
+  try {
+    const r=await fetch('/auth/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,purpose:'register'})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    userEmail=email;
+    document.getElementById('otp-sent-to').textContent=`Code sent to ${email}`;
+    if(d.dev_code){
+      const hint=document.getElementById('dev-code-hint');
+      hint.style.display='block';
+      hint.innerHTML=`🔧 Dev mode (no SMTP configured)<br>Your code: <strong style="font-size:18px;letter-spacing:3px">${d.dev_code}</strong>`;
+    }
+    goStep(2);
+    startResendTimer();
+    document.getElementById('otp0').focus();
+  } catch(e){ setMsg(e.message); }
+  btn.disabled=false; btn.textContent='Continue →';
+}
+
+async function completeRegister() {
+  const code=getOtp();
+  if(code.length!==6) return setMsg('Enter the full 6-digit code.');
+  clearMsg();
+  const btn=document.getElementById('btn2'); btn.disabled=true; btn.textContent='Creating account…';
+  try {
+    const r=await fetch('/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('name').value.trim(),email:userEmail,password:document.getElementById('password').value,code})});
+    const d=await r.json();
+    if(!d.success) throw new Error(d.error);
+    localStorage.setItem('zeroapi_key',d.data.api_key);
+    localStorage.setItem('zeroapi_token',d.data.token);
+    document.getElementById('kv-key').textContent=d.data.api_key;
+    document.getElementById('kv-limit').textContent=d.data.limit;
+    goStep(3);
+  } catch(e){ setMsg(e.message); }
+  btn.disabled=false; btn.textContent='Create Account ✓';
+}
+
+async function resendOtp() {
+  document.getElementById('resend-btn').disabled=true;
+  const r=await fetch('/auth/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,purpose:'register'})});
+  const d=await r.json();
+  if(d.dev_code){ const h=document.getElementById('dev-code-hint'); h.style.display='block'; h.innerHTML=`🔧 New code: <strong style="font-size:18px;letter-spacing:3px">${d.dev_code}</strong>`; }
+  setMsg('New code sent!','ok');
+  startResendTimer();
+}
+
+function startResendTimer() {
+  clearInterval(resendInterval);
+  let t=60;
+  document.getElementById('resend-btn').disabled=true;
+  document.getElementById('resend-timer').textContent=`(${t}s)`;
+  resendInterval=setInterval(()=>{ t--; document.getElementById('resend-timer').textContent=`(${t}s)`; if(t<=0){ clearInterval(resendInterval); document.getElementById('resend-btn').disabled=false; document.getElementById('resend-timer').textContent=''; } },1000);
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  for(let i=1;i<=3;i++){ const d=document.getElementById('dot'+i); d.className='step-dot'+(i<n?' done':i===n?' active':''); }
+}
+function goBack(){ clearMsg(); goStep(1); }
+
+function copyEl(id) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{ const el=document.getElementById(id); const orig=el.textContent; el.textContent='✓ Copied!'; setTimeout(()=>el.textContent=orig,1400); });
+}
+</script>
+</body>
+</html>
